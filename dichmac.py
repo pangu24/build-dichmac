@@ -12,13 +12,13 @@ import subprocess
 import platform
 from datetime import datetime, date, time as dt_time
 import json
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 QFrame, QLabel, QPushButton, QComboBox, QLineEdit, QTextEdit,
 QTableWidget, QTableWidgetItem, QHeaderView, QFileDialog,
 QMessageBox, QProgressBar, QGroupBox, QSplitter, QSpinBox,
 QAbstractSpinBox, QDialog, QListWidget, QDialogButtonBox)
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer, QWaitCondition, QMutex
-from PyQt6.QtGui import QFont
+from PySide6.QtCore import Qt, QThread, Signal, QTimer, QWaitCondition, QMutex
+from PySide6.QtGui import QFont
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -178,11 +178,11 @@ class TabContext:
   self.start_time=0
 
 class TranslateThread(QThread):
- started=pyqtSignal()
- chunk_sent=pyqtSignal(int,int)
- finished=pyqtSignal()
- log_signal=pyqtSignal(str)
- paused_signal=pyqtSignal(bool)
+ started=Signal()
+ chunk_sent=Signal(int,int)
+ finished=Signal()
+ log_signal=Signal(str)
+ paused_signal=Signal(bool)
  def __init__(self,parent):
   super().__init__(parent)
   self.parent=parent
@@ -690,8 +690,8 @@ class GemNameDialog(QDialog):
   super().accept()
 
 class MainWindow(QMainWindow):
- update_log_signal=pyqtSignal(str)
- update_table_signal=pyqtSignal(str,str)
+ update_log_signal=Signal(str)
+ update_table_signal=Signal(str,str)
  def __init__(self):
   super().__init__()
   self.setWindowTitle("Gemini Auto Translator Pro (Licensed)")
