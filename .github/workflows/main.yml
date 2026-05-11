@@ -20,25 +20,24 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # Cài đặt đầy đủ thư viện cần thiết cho tool dubbing video của bạn
-        pip install nuitka PyQt6 undetected-chromedriver selenium cryptography pyperclip zstandard ordered-set
-
-    - name: Verify files
-      run: ls -R # Lệnh này để kiểm tra xem file dichmac.py có thực sự nằm ở thư mục gốc không
+        # Cài đặt các thư viện cần thiết cho tool dubbing của bạn
+        pip install nuitka PyQt6 undetected-chromedriver selenium cryptography pyperclip zstandard
 
     - name: Build with Nuitka
       run: |
-        # --quiet: Giảm bớt log thừa để dễ theo dõi lỗi chính
-        # --assume-yes-for-downloads: Tương đương confirm-external-download
-        python -m nuitka --standalone \
-                         --macos-create-app-bundle \
-                         --enable-plugin=pyqt6 \
-                         --collect-all=undetected_chromedriver \
-                         --assume-yes-for-downloads \
-                         dichmac.py
+        # --include-package: Thay thế cho collect-all để Nuitka nhận diện undetected_chromedriver
+        # --macos-create-app-bundle: Tạo file .app chuẩn cho người dùng Mac
+        python3 -m nuitka --standalone \
+                          --macos-create-app-bundle \
+                          --enable-plugin=pyqt6 \
+                          --include-package=undetected_chromedriver \
+                          --assume-yes-for-downloads \
+                          --output-dir=dist \
+                          dichmac.py
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: DichMac-MacOS-App
-        path: dichmac.app/
+        # Nuitka sẽ xuất file vào dist/dichmac.app
+        path: dist/dichmac.app/
