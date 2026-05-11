@@ -20,15 +20,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install nuitka PyQt6 undetected-chromedriver selenium cryptography pyperclip
+        # Cài thêm zstandard để Nuitka nén và biên dịch hiệu quả hơn
+        python -m pip install nuitka PyQt6 undetected-chromedriver selenium cryptography pyperclip zstandard
 
     - name: Build with Nuitka
       run: |
-        # Biên dịch sang mã máy cho Mac
+        # --confirm-external-download: Tự động tải các tool biên dịch cần thiết mà không chờ người dùng nhấn xác nhận
+        # --collect-all: Đảm bảo gom đủ toàn bộ tài nguyên của thư viện undetected-chromedriver
         python -m nuitka --standalone \
                          --macos-create-app-bundle \
                          --enable-plugin=pyqt6 \
                          --collect-all=undetected_chromedriver \
+                         --confirm-external-download \
                          dichmac.py
 
     - name: Upload Artifact
