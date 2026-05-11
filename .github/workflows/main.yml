@@ -1,0 +1,38 @@
+name: Build MacOS App with Nuitka
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install nuitka PyQt6 undetected-chromedriver selenium cryptography pyperclip
+
+    - name: Build with Nuitka
+      run: |
+        # Biên dịch sang mã máy cho Mac
+        python -m nuitka --standalone \
+                         --macos-create-app-bundle \
+                         --enable-plugin=pyqt6 \
+                         --collect-all=undetected_chromedriver \
+                         dichmac.py
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: DichMac-MacOS-App
+        path: dichmac.app/
