@@ -3,6 +3,7 @@ name: Build MacOS App with Nuitka (PySide6)
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công từ giao diện GitHub
 
 jobs:
   build:
@@ -24,17 +25,25 @@ jobs:
 
     - name: Build with Nuitka
       run: |
-        # Dùng PySide6 để Nuitka biên dịch mã máy C mượt mà trên Mac
+        # Biên dịch sang app máy Mac, gộp PySide6, nén package ẩn và tích hợp icon.ico
         python3 -m nuitka --standalone \
                           --macos-create-app-bundle \
+                          --macos-app-icon=icon.ico \
                           --enable-plugin=pyside6 \
                           --include-package=undetected_chromedriver \
                           --assume-yes-for-downloads \
                           --output-dir=dist \
                           dichmac.py
 
+    - name: Compress App Bundle
+      run: |
+        # Bắt buộc nén thủ công với tham số -ry để giữ lại symlink (đường dẫn ảo) 
+        # và quyền thực thi chạy app của hệ điều hành macOS
+        cd dist
+        zip -ry DichMac-MacOS.zip "dichmac.app"
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: DichMac-MacOS-App
-        path: dist/dichmac.app/
+        path: dist/DichMac-MacOS.zip
