@@ -5,3 +5,4 @@ cryptography
 pyperclip
 zstandard
 nuitka
+imageio
